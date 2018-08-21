@@ -1,0 +1,11 @@
+{
+	"name": "exam2d",
+	"author": "anonymous",
+	"developer": "SooYoung Chung",
+	"graph": {
+				"range": "2d",
+				"2d": { "x": "", "y": "x^2", }
+
+
+				}
+}
