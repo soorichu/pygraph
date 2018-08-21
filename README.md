@@ -1,6 +1,9 @@
 # pygraph
 ### Sooyoung chung
 
+Windows EXE : <http://soori.co/bbs/board.php?bo_table=notice&wr_id=18> 
+Download pygraph.zip and unzip. Run pygraph.exe(which is located with font/, cloud_data/)
+
 This is really really Simple Python Graphing Program
 It is arranged 3 tabs
 
@@ -13,4 +16,3 @@ This is follwed MIT License.
 If you contact me, please  send email : soorichu@gmail.com or Homepage: http://soori.co
 
 Thanks!
-
