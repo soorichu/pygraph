@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # This is really really Simple Python Graphing Program
 # It is arranged 3 tabs
