@@ -7,7 +7,7 @@
 # second tab can draw 3d graphing such as z = sin(sqrt(x^2 + y^2)) and x = cos(u), y = cos(v), z = sin(u + v)
 # third tab can crawl rss feed datas and make word cloud map. it is so beautiful
 #
-# This Program is made by SoooYoung Chung at 2018.8.16. in Incheon GongHang High School in Korea
+# https://github.com/soorichu
 # This is follwed MIT License.
 # If you contact me, please send email : soorichu@gmail.com or Homepage : http://soori.co
 # Thanks!
@@ -30,6 +30,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets, sip
 import feedparser
 from wordcloud import WordCloud, STOPWORDS
 
+from polytofunction import polytofunction
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -42,6 +44,8 @@ class Ui_Dialog(object):
                      "PRGn", "Paired", "Pastel1", "Pastel2", "PiYG", "PuBu", "PuBuGn", "PuOr", "PuRd", 
                     "RdBu", "RdGy", "RdPu", "RdYlBu", "RdYlGn",  "Set1", "Set2", "Set3", 
                     "Wistia", "YlGn", "YlGnBu", "YlOrBr", "YlOrRd"]
+
+        self.graph2d = 0
 
         Dialog.setObjectName("PyGraph")
         Dialog.setWindowTitle("PyGraph")
@@ -64,38 +68,56 @@ class Ui_Dialog(object):
         self.tabWidget.addTab(self.tab, "2차원")
 
         #define 2d graph tab 
-        self.label_3 = QtWidgets.QLabel(self.tab)
-        self.label_3.setGeometry(QtCore.QRect(20, 20, 500, 21))
-        self.label_3.setFont(font)
-        self.label_3.setObjectName("label_3")
-        self.label_3.setText("미지수가 x인 식 입력")
+#        self.label_3 = QtWidgets.QLabel(self.tab)
+#        self.label_3.setGeometry(QtCore.QRect(20, 20, 500, 21))
+#        self.label_3.setFont(font)
+#        self.label_3.setObjectName("label_3")
+#        self.label_3.setText("미지수가 x인 식 입력")
 
-        self.checkBox_1 = QtWidgets.QCheckBox(self.tab)
-        self.checkBox_1.setGeometry(QtCore.QRect(300, 64, 96, 31))
-        self.checkBox_1.setObjectName("checkBox_1")
-        self.checkBox_1.setText("x 생략")
-        self.checkBox_1.setChecked(True)
+        #RadioButton for 2D Graph
+        self.radioButton_1 = QtWidgets.QRadioButton(self.tab)
+        self.radioButton_1.setGeometry(QtCore.QRect(20, 20, 80, 31))
+        self.radioButton_1.setText("y=f(x)")
+        self.radioButton_1.setChecked(True)
+
+        self.radioButton_2 = QtWidgets.QRadioButton(self.tab)
+        self.radioButton_2.setGeometry(QtCore.QRect(160, 20, 200, 31))
+        self.radioButton_2.setText("매개변수 t 방정식")
+        self.radioButton_2.setChecked(False)
+
+        self.radioButton_3 = QtWidgets.QRadioButton(self.tab)
+        self.radioButton_3.setGeometry(QtCore.QRect(350, 20, 150, 31))
+        self.radioButton_3.setText("도형의 방정식")
+        self.radioButton_3.setChecked(False)
+
+
+#        self.checkBox_1 = QtWidgets.QCheckBox(self.tab)
+#        self.checkBox_1.setGeometry(QtCore.QRect(300, 64, 96, 31))
+#        self.checkBox_1.setObjectName("checkBox_1")
+#        self.checkBox_1.setText("x 생략")
+#        self.checkBox_1.setChecked(True)
 
         self.lineEdit_2 = QtWidgets.QLineEdit(self.tab)
-        self.lineEdit_2.setGeometry(QtCore.QRect(60, 60, 211, 41))
+        self.lineEdit_2.setGeometry(QtCore.QRect(50, 60, 361, 41))
         self.lineEdit_2.setFont(font)
         self.lineEdit_2.setText("")
         self.lineEdit_2.setObjectName("lineEdit_2")
-        self.lineEdit_2.setEnabled(False) #x 생략 
+        self.lineEdit_2.hide()
 
         self.label_4 = QtWidgets.QLabel(self.tab)
         self.label_4.setGeometry(QtCore.QRect(20, 60, 31, 31))
         self.label_4.setFont(font)
         self.label_4.setObjectName("label_4")
         self.label_4.setText("x = ")
+        self.label_4.hide()
 
         self.lineEdit_3 = QtWidgets.QLineEdit(self.tab)
-        self.lineEdit_3.setGeometry(QtCore.QRect(60, 130, 361, 41))
+        self.lineEdit_3.setGeometry(QtCore.QRect(50, 95, 361, 41))
         self.lineEdit_3.setFont(font)
         self.lineEdit_3.setObjectName("lineEdit_3")
 
         self.label_5 = QtWidgets.QLabel(self.tab)
-        self.label_5.setGeometry(QtCore.QRect(20, 130, 31, 31))
+        self.label_5.setGeometry(QtCore.QRect(20, 95, 31, 31))
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
         self.label_5.setText("y = ")
@@ -231,7 +253,7 @@ class Ui_Dialog(object):
         self.comboBox_3.setObjectName("comboBox_3")
         self.font_path = 'font\\'
         for root, dirs, files in walk(self.font_path):
-            print(root, dirs, files)
+        #    print(root, dirs, files)
             for fname in files:
                 self.comboBox_3.addItem(fname)
 
@@ -267,20 +289,41 @@ class Ui_Dialog(object):
         #Function 3dim
         self.pushButton_3.clicked.connect(self.graphing3d)
 
-        #tab1 x check
-        self.checkBox_1.stateChanged.connect(self.checkBox_1Changed)
+        #radioButton clicked
+        self.radioButton_1.clicked.connect(self.radioButtonChanged)
+        self.radioButton_2.clicked.connect(self.radioButtonChanged)
+        self.radioButton_3.clicked.connect(self.radioButtonChanged)
 
         #tab2 x, y check
         self.checkBox_5.stateChanged.connect(self.checkBox_5Changed)
      
 
-    def checkBox_1Changed(self):
-        if self.checkBox_1.isChecked() == True:
-            self.lineEdit_2.setEnabled(False)
-            self.label_3.setText("미지수가 x인 함수식")
-        else:
-            self.lineEdit_2.setEnabled(True)
-            self.label_3.setText("미지수가 t인 매개변수 방정식")
+
+    def radioButtonChanged(self):
+        if self.radioButton_1.isChecked() == True:
+            self.lineEdit_2.hide()
+            self.label_4.hide()
+            self.label_5.show()
+            self.label_5.setGeometry(QtCore.QRect(20, 95, 31, 31))
+            self.lineEdit_3.setGeometry(QtCore.QRect(50, 95, 361, 41))
+            self.graph2d = 0
+
+        elif self.radioButton_2.isChecked() == True:
+            self.lineEdit_2.show()
+            self.label_4.show()
+            self.label_5.show()
+            self.label_5.setGeometry(QtCore.QRect(20, 130, 31, 31))
+            self.lineEdit_3.setGeometry(QtCore.QRect(50, 130, 361, 41))
+            self.graph2d = 1
+#            self.label_3.setText("미지수가 x인 함수식")
+        elif self.radioButton_3.isChecked() == True:
+            self.lineEdit_2.hide()
+            self.label_4.hide()
+            self.label_5.hide()
+#            self.label_5.setGeometry(QtCore.QRect(20, 95, 31, 31))
+            self.lineEdit_3.setGeometry(QtCore.QRect(20, 95, 400, 41))
+            self.graph2d = 2
+#            self.label_3.setText("미지수가 t인 매개변수 방정식")
 
 
     def checkBox_5Changed(self):
@@ -288,7 +331,7 @@ class Ui_Dialog(object):
             self.lineEdit_5.setEnabled(False)
             self.lineEdit_4.setEnabled(False)
             self.label_6.setText("미지수가 x, y인 함수식")
-            print(True)
+        #    print(True)
         else:
             self.lineEdit_5.setEnabled(True)
             self.lineEdit_4.setEnabled(True)
@@ -300,7 +343,7 @@ class Ui_Dialog(object):
         t = arange(-100, 100, 0.01)
         x = arange(-100, 100, 0.01)
         graph_text_x = ""
-        if self.checkBox_1.isChecked() == False:
+        if self.graph2d == 1:
             graph_text_x = self.lineEdit_2.text()
 
             try:
@@ -311,13 +354,26 @@ class Ui_Dialog(object):
             graph_text_x = "$x = "+graph_text_x.replace("*", "")+"$, "
 
         graph_text = self.lineEdit_3.text()
+        temgraph = ""
 
-        try:
-            y = eval(graph_text.replace("^", "**"))
-        except:
-            print("error")
+        if self.graph2d == 2:
+            try: temgraph = polytofunction(graph_text)
+            except: print('error')
+            if temgraph[-1]=='m':
+                try:            
+                    y = eval(temgraph[:-1].replace("^", "**"))
+                except:
+                    print('error')
+        else:
+            try:
+                y = eval(graph_text.replace("^", "**"))
+            except:
+                print("error")
 
-        graph_text = graph_text_x + "$y = "+graph_text.replace("*", "")+"$"
+        if self.graph2d != 2:
+            graph_text = graph_text_x + "$y = "+graph_text.replace("*", "")+"$"
+        else: 
+            graph_text = "$"+graph_text+"$"
 
         try:
             self.ax.plot(x, y)
@@ -330,11 +386,29 @@ class Ui_Dialog(object):
         plt.xlim(-10, 10)
         plt.ylim(-10, 10)
 
+        #axis pretty
+        ax = plt.gca()
+        ax.spines['right'].set_color('none')
+        ax.spines['top'].set_color('none')
+        ax.spines['bottom'].set_position(('data',0))
+        ax.spines['left'].set_position(('data',0))
+        ax.xaxis.set_ticks_position('bottom')
+        ax.yaxis.set_ticks_position('left')
+
         try:
             plt.plot(x, y, linewidth="3", linestyle="-", label=graph_text)
+            plt.plot()
         except:
             print("error")
 
+        if self.graph2d == 2:
+            try:            
+                y = eval(('-('+temgraph[:-1]+')').replace("^", "**"))
+                plt.plot(x, y, linewidth="3", linestyle="-")
+                plt.plot()
+            except:
+                print('error')
+                
         plt.legend(loc='upper left', frameon=False)
         plt.grid(True)
         plt.show()
@@ -402,8 +476,8 @@ class Ui_Dialog(object):
         self.savedata = self.cloud_folder + self.lineEdit_10.text()
         self.d = path.dirname(__file__)
         self.mystopwords = ['test', 'quot', 'nbsp']
-        print(self.savedata)
-        print(self.feedlist)
+   #     print(self.savedata)
+    #    print(self.feedlist)
         self.combineWordsFromFeed(self.savedata)
 
 
@@ -428,7 +502,7 @@ class Ui_Dialog(object):
     def combineWordsFromFeed(self, filename):
         with open(filename, 'w') as wfile:
             for feed in self.feedlist:
-                print("Parsing : "+ feed)
+        #        print("Parsing : "+ feed)
                 fp = feedparser.parse(feed)
                 for e in fp.entries:
                     txt = str(str(e.title).encode('utf8')) + self.extractPlainText(str(e.description).encode('utf8'))
