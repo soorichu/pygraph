@@ -128,8 +128,22 @@ class Ui_Dialog(object):
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.setText("Graph")
 
+        self.checkBox_2 = QtWidgets.QCheckBox(self.tab)
+        self.checkBox_2.setGeometry(QtCore.QRect(30, 200, 150, 40))
+        self.checkBox_2.setFont(font)
+        self.checkBox_2.setObjectName("checkBox_2")
+        self.checkBox_2.setText("x축 단위 π")
+
+#        self.checkBox_3 = QtWidgets.QCheckBox(self.tab)
+#        self.checkBox_3.setGeometry(QtCore.QRect(250, 200, 150, 40))
+#        self.checkBox_3.setFont(font)
+#        self.checkBox_3.setObjectName("checkBox_3")
+#        self.checkBox_3.setText("격자 보이기")
+#        self.checkBox_3.setChecked(True)
+
+
         self.label_1 = QtWidgets.QLabel(self.tab)
-        self.label_1.setGeometry(QtCore.QRect(20, 200, 500, 150))
+        self.label_1.setGeometry(QtCore.QRect(20, 270, 500, 150))
         self.label_1.setText("#팁\n1. 한 좌표평면에 여러 개의 그래프를 그릴 수 있음.\n2. 숫자와 문자의 곱은 반드시 * 표시해야 함.\n3. 매개변수 방정식을 이용할 경우 'x 생략' 체크를 해제하고 \n   매개변수는 t로 이용.\n4. 기호사용 예 : x^2-2*x+1, sqrt(x), abs(x), sin(x), cos(x), log(x)")
         
 
@@ -275,7 +289,7 @@ class Ui_Dialog(object):
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
         #tab3 buttonbox function
@@ -296,7 +310,33 @@ class Ui_Dialog(object):
 
         #tab2 x, y check
         self.checkBox_5.stateChanged.connect(self.checkBox_5Changed)
+
+        self.checkBox_2.stateChanged.connect(self.checkBox_2Changed)
+#        self.checkBox_3.stateChanged.connect(self.checkBox_3Changed)
      
+
+    def checkBox_3Changed(self):
+        if self.checkBox_3.isChecked:
+            plt.grid(True)
+        else:
+            plt.grid(False)
+
+
+    def checkBox_2Changed(self):
+        if self.checkBox_2.isChecked:
+            xtics = arange(-30*pi, 30*pi, pi)
+            xticlabel = []
+            for xt in arange(-30, 30, 1):
+                if xt == -1: xticlabel.append(r'$-\pi$')
+                elif xt == 1: xticlabel.append(r'$\pi$')
+                else: xticlabel.append('$'+str(xt)+r'\pi$')
+            plt.xticks(xtics, xticlabel)
+        else:
+            xtics = arange(-100, 100, 1)
+            xticlabel = []
+            for xt in range(-100, 100, 1):
+                xticlabel.append(xt)
+            plt.xtics(xtics, xticlabel) 
 
 
     def radioButtonChanged(self):
@@ -418,7 +458,7 @@ class Ui_Dialog(object):
     def graphing3d(self):
         plt.close(self.fig)
 
-        self.fig3 = plt.figure(figsize=(10, 8))
+        self.fig3 = plt.figure(figsize=(8, 8))
         self.ax3 = self.fig3.add_subplot(111, projection='3d') 
 
         u = arange(-10, 10, 0.25)

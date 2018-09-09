@@ -54,5 +54,5 @@ def polytofunction(poly):
 		count += 1
 #		print(ypoly)
 #		print(xpoly)
-#	print(xpoly)
+	print(xpoly)
 	return xpoly
